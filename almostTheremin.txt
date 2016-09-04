@@ -1,0 +1,69 @@
+#include <wiringPi.h>
+#include <stdio.h>
+#include <sys/time.h>
+#define Trig 2
+#define Echo 1
+#define BeepPin 0
+void ultraInit(void)
+{
+	pinMode(Echo, INPUT);
+	pinMode(Trig, OUTPUT);
+}
+void beep(float note, unsigned int duration)
+{
+	long beepDelay = (long)(1000000/note);
+	long time = (long)((duration*1000)/(beepDelay*2));
+	int i;
+	for (i=0;i<time;i++)
+	{
+		digitalWrite(BeepPin, HIGH);
+		delayMicroseconds(beepDelay);
+		digitalWrite(BeepPin, LOW);
+		delayMicroseconds(beepDelay);
+	}
+}
+float disMeasure(void)
+{
+	struct timeval tv1;
+	struct timeval tv2;
+	long time1, time2;
+	float dis;
+	digitalWrite(Trig, LOW);
+	delayMicroseconds(2);
+	digitalWrite(Trig, HIGH);
+	delayMicroseconds(10);
+
+	while(!(digitalRead(Echo) == 1));
+	gettimeofday(&tv1, NULL); 
+	while(!(digitalRead(Echo) == 0));
+	gettimeofday(&tv2, NULL); 
+	time1 = tv1.tv_sec  + tv1.tv_usec;
+	time2 = tv2.tv_sec  + tv2.tv_usec;
+	dis = (float)(time2 - time1); 
+	return dis;
+}
+int main(void)
+{
+	float dis;
+	if(wiringPiSetup() == -1)
+	{ 
+		printf("setup wiringPi failed !");
+		return 1; 
+	}
+	pinMode(BeepPin, OUTPUT);
+	ultraInit();
+
+	
+
+	while(1)
+	{
+		dis = disMeasure();
+		printf("%0.2f \n",dis);
+		beep(dis,13);
+
+		delay(39);
+	
+}
+
+	return 0;
+}

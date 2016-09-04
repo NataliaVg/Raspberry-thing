@@ -1,0 +1,48 @@
+#include <wiringPi.h>
+#include <stdio.h>
+
+#define BeepPin 0
+void beep(unsigned int note, unsigned int duration)
+{
+	long beepDelay = (long)(1000000/note);
+	long time = (long)((duration*1000)/(beepDelay*2));
+	int i;
+	for (i=0;i<time;i++)
+	{
+		digitalWrite(BeepPin, HIGH);
+		delayMicroseconds(beepDelay);
+		digitalWrite(BeepPin, LOW);
+		delayMicroseconds(beepDelay);
+	}
+}
+
+int main(void)
+{       
+
+        if(wiringPiSetup() == -1){
+              printf("lserror");
+                return 1;
+        }
+        pinMode(BeepPin, OUTPUT);
+        while(1){
+                beep(2000, 500);
+		beep(2300, 500);
+		beep(2600, 500);
+		beep(2750, 500);
+		beep(3136, 500);
+		beep(3520, 500);
+		beep(3951, 500);
+		beep(4186, 500);
+		beep(4186, 500);
+		beep(3951, 500);
+		beep(3520, 500);
+		beep(3136, 500);
+		beep(2793, 500);
+		beep(2637, 500);
+		beep(2349, 500);
+                beep(2093, 500);
+        }
+        return 0;
+}
+
+
